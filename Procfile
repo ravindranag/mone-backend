@@ -1,1 +1,1 @@
-web: npm ci && npx prisma generate && npm run build && npm start
+web: npx prisma generate && npm start
