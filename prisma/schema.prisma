@@ -2,12 +2,32 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
   referentialIntegrity = "prisma"
+}
+
+model User {
+  id          String  @id @default(cuid())
+  name        String
+  username    String  @unique
+  email       String  @unique
+  password    String
+  profile_pic String?
+  walletId    String  @unique
+  wallet      Wallet  @relation(fields: [walletId], references: [id], onDelete: Cascade)
+}
+
+model Wallet {
+  id     String @id @default(cuid())
+  amount Int    @default(0)
+  userId String
+  user   User?
+
+  @@index([userId])
 }
