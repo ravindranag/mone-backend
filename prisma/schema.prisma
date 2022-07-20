@@ -13,21 +13,68 @@ datasource db {
 }
 
 model User {
-  id          String  @id @default(cuid())
+  id          String          @id @default(cuid())
   name        String
-  username    String  @unique
-  email       String  @unique
+  username    String          @unique
+  email       String          @unique
   password    String
   profile_pic String?
-  walletId    String  @unique
-  wallet      Wallet  @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  wallet      Wallet?
+  groups      UsersInGroups[]
+}
+
+model Group {
+  id         String          @id @default(cuid())
+  name       String
+  isPersonal Boolean         @default(true)
+  users      UsersInGroups[]
+}
+
+model UsersInGroups {
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id])
+
+  @@id([userId, groupId])
 }
 
 model Wallet {
   id     String @id @default(cuid())
   amount Int    @default(0)
-  userId String
-  user   User?
+  userId String @unique
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model Transaction {
+  id        String              @id @default(cuid())
+  type      TransactionType     @default(TRANSFER)
+  details   TransactionDetails?
+  message   String?
+  createdAt DateTime            @default(now())
+}
+
+enum TransactionType {
+  EXPENSE
+  TRANSFER
+}
+
+model TransactionGroup {
+  id       String @id @default(cuid())
+  name     String
+  amount   Int
+  paidById String
+}
+
+model TransactionDetails {
+  id            String       @id @default(cuid())
+  transactionId String       @unique
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  from          String?
+  to            String?
+  wallet        String?
+
+  @@index([transactionId])
 }
