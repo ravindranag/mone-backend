@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from 'express'
 const saltRounds = 10
 
 const hashPassword = (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body)
     const password = req.body.user.password
     bcrypt.hash(password, saltRounds)
         .then(hashedPassword => {
