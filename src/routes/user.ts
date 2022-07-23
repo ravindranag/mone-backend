@@ -1,5 +1,6 @@
-import express from 'express'
+import express, { Request } from 'express'
 import multer from 'multer'
+import { getCurrentUser, AuthorizedRequest } from '../services/auth'
 import { comparePassword, hashPassword } from '../services/bcrypt'
 import { gsStorage, uploadProfilePic } from '../services/googleCloudStorage'
 import { prisma } from '../services/prismaClient'
@@ -75,7 +76,7 @@ router.post('/', hashPassword, async (req, res) => {
 		})
 })
 
-router.post('/login', async (req, res) => {
+router.post('/login', async (req: Request, res) => {
 	const { email, password } = req.body
 	prisma.user.findFirstOrThrow({
 		where: {
@@ -125,12 +126,9 @@ router.post('/login', async (req, res) => {
 	})
 })
 
-router.get('/', async (req, res) => {
-	const allUsers = await prisma.user.findMany({
-		select: UserDetails
-	})
+router.get('/', getCurrentUser, async (req: AuthorizedRequest, res) => {
 	res.json({
-		users: allUsers
+		user: req.user
 	})
 })
 
