@@ -41,7 +41,7 @@ router.post('/', hashPassword, async (req, res) => {
 			...user,
 			wallet: {
 				create: {
-					amount: wallet.amount | 0
+					amount: wallet ? wallet.amount : 0
 				}
 			}
 		},
