@@ -13,14 +13,16 @@ datasource db {
 }
 
 model User {
-  id          String          @id @default(cuid())
-  name        String
-  username    String          @unique
-  email       String          @unique
-  password    String
-  profile_pic String?
-  wallet      Wallet?
-  groups      UsersInGroups[]
+  id         String          @id @default(cuid())
+  name       String
+  username   String          @unique
+  email      String          @unique
+  password   String
+  profilePic String?
+  wallet     Wallet?
+  groups     UsersInGroups[]
+  token      Token?
+  joinedAt   DateTime        @default(now())
 }
 
 model Group {
@@ -43,7 +45,7 @@ model Wallet {
   id     String @id @default(cuid())
   amount Int    @default(0)
   userId String @unique
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -77,4 +79,13 @@ model TransactionDetails {
   wallet        String?
 
   @@index([transactionId])
+}
+
+model Token {
+  id        String @id @default(cuid())
+  accessKey String @default(uuid())
+  userId    String @unique
+  user      User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([accessKey, userId])
 }

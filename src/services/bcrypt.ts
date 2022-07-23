@@ -12,6 +12,20 @@ const hashPassword = (req: Request, res: Response, next: NextFunction) => {
         })
 }
 
+const comparePassword = async (plainPassword: string, hashedPassword: string) => {
+    return bcrypt.compare(plainPassword, hashedPassword)
+    .then(result => {
+        if(result === true){
+            return true
+        }
+        throw new Error('Invalid Password')
+    })
+    .catch(err => {
+        throw err
+    })
+}
+
 export {
-    hashPassword
+    hashPassword,
+    comparePassword
 }
