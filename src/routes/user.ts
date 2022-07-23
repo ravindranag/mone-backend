@@ -105,6 +105,9 @@ router.post('/login', async (req, res) => {
 			return prisma.token.create({
 				data: {
 					userId: user.id
+				},
+				select: {
+					accessKey: true
 				}
 			})
 		})
