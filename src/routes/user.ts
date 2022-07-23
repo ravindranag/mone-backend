@@ -32,7 +32,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 router.post('/', hashPassword, async (req, res) => {
-	const user = req.body
+	const user = req.body.user
+	const wallet = req.body.wallet
 	user.username = user.email.split('@')[0]
 	console.log(user)
 	prisma.user.create({
@@ -40,7 +41,7 @@ router.post('/', hashPassword, async (req, res) => {
 			...user,
 			wallet: {
 				create: {
-					amount: 0
+					amount: wallet.amount | 0
 				}
 			}
 		},
