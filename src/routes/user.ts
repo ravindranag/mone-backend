@@ -59,8 +59,18 @@ router.post('/', hashPassword, async (req, res) => {
 		}
 	})
 		.then(user => {
-			res.json({
-				user
+			prisma.token.create({
+				data: {
+					userId: user.id
+				},
+				select: {
+					accessKey: true
+				}
+			}).then(token => {
+				res.json({
+					user,
+					token
+				})
 			})
 		})
 		.catch(err => {
